@@ -2,9 +2,7 @@
 using Infrastructure;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +17,7 @@ namespace Application.Activities
 
         public class Handler : IRequestHandler<Control>
         {
-            private DataContext _dataContext;
+            private readonly DataContext _dataContext;
 
             public Handler(DataContext dataContext)
             {
@@ -32,7 +30,7 @@ namespace Application.Activities
                 if (toDelete == null)
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found" });
 
-                _dataContext.Activities.Remove(toDelete);
+                await Task.Run(() => _dataContext.Activities.Remove(toDelete));
 
                 if (await _dataContext.SaveChangesAsync() > 0)
                     return Unit.Value;

@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.Errors;
 using Application.Extensions;
 using Application.Interfaces;
 using Domain;
@@ -6,6 +7,7 @@ using FluentValidation;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,10 +52,8 @@ namespace Application.User
 
             public async Task<UserDTO> Handle(Comand request, CancellationToken cancellationToken)
             {
-                // if (await _dataContext.Users.AnyAsync(usr => usr.Email == request.Email))
-                //     throw new RestException(System.Net.HttpStatusCode.BadRequest, new{Error= "User exists" });
-
-                Console.WriteLine("INFO: "+request.Email + " " + request.DisplayName + " " + request.UserName);
+                if (await _dataContext.Users.AnyAsync(usr => usr.Email == request.Email))
+                    throw new RestException(System.Net.HttpStatusCode.BadRequest, new { Error = "User exists" });
 
                 var user = new AppUser()
                 {

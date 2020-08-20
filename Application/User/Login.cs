@@ -4,7 +4,6 @@ using Application.Extensions;
 using Application.Interfaces;
 using Domain;
 using FluentValidation;
-using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
@@ -51,7 +50,6 @@ namespace Application.User
 
                     if (result.Succeeded)
                     {
-                        //generate token
                         return new UserDTO
                         {
                             DisplayName = user.DisplayName,

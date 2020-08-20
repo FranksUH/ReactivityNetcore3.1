@@ -4,9 +4,7 @@ using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +18,8 @@ namespace Application.Photo
         }
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private DataContext _dataContext;
-            private IUserAccesor _userAccesor;
+            private readonly DataContext _dataContext;
+            private readonly IUserAccesor _userAccesor;
             public Handler(DataContext dataContext, IUserAccesor userAccesor)
             {
                 _dataContext = dataContext;

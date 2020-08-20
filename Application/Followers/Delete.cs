@@ -1,6 +1,5 @@
 ﻿using Application.Errors;
 using Application.Interfaces;
-using Domain;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +17,8 @@ namespace Application.Followers
         }
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private IUserAccesor _userAccesor;
-            private DataContext _dataContext;
+            private readonly IUserAccesor _userAccesor;
+            private readonly DataContext _dataContext;
 
             public Handler(DataContext dataContext, IUserAccesor userAccesor)
             {
@@ -39,9 +38,9 @@ namespace Application.Followers
                 if (follow == null)
                     throw new RestException(System.Net.HttpStatusCode.BadRequest, new { Errors = "Already not Following" });
 
-                _dataContext.Followings.Remove(follow);
+                await Task.Run(()=> _dataContext.Followings.Remove(follow));
 
-                if (_dataContext.SaveChanges() > 0)
+                if (await _dataContext.SaveChangesAsync() > 0)
                     return Unit.Value;
 
                 throw new Exception("Something where wrong saving");

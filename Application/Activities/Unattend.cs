@@ -4,8 +4,6 @@ using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,8 +17,8 @@ namespace Application.Activities
         }
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private IUserAccesor _userAccesor;
-            private DataContext _dataContext;
+            private readonly IUserAccesor _userAccesor;
+            private readonly DataContext _dataContext;
             public Handler(DataContext dataContext, IUserAccesor userAccesor)
             {
                 _dataContext = dataContext;
@@ -50,7 +48,6 @@ namespace Application.Activities
                     return Unit.Value;
 
                 throw new Exception("Problem saving changes");
-
             }
         }
     }

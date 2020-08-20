@@ -1,11 +1,7 @@
 ﻿using Application.Errors;
-using Application.Interfaces;
+using Common.Service.Interfaces;
 using Infrastructure;
-using Infrastructure.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,9 +15,9 @@ namespace Application.Photo
         }
         public class Handler : IRequestHandler<Command, bool>
         {
-            private IPhotoAccesor _photoAccesor;
-            private DataContext _dataContext;
-            public Handler(IPhotoAccesor photoAccesor, DataContext dataContext)
+            private readonly IPhotoAccessor _photoAccesor;
+            private readonly DataContext _dataContext;
+            public Handler(IPhotoAccessor photoAccesor, DataContext dataContext)
             {
                 _dataContext = dataContext;
                 _photoAccesor = photoAccesor;
@@ -34,14 +30,13 @@ namespace Application.Photo
 
                 if (_photoAccesor.DeletePhoto(request.PhotoId))
                 {                  
-                    _dataContext.Photos.Remove(photo);
-                    if (_dataContext.SaveChanges() > 0)
+                    await Task.Run(()=> _dataContext.Photos.Remove(photo));
+                    if (await _dataContext.SaveChangesAsync() > 0)
                         return true;
                     return false;
                 }
                 return false;
             }
         }
-
     }
 }

@@ -6,17 +6,13 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 
 namespace Application.Activities
 {
     public class FollowingResolve : IValueResolver<UserActivity, AttendeeDTO, bool>
     {
-        private DataContext _dataContext;
-        private IUserAccesor _userAccesor;
+        private readonly DataContext _dataContext;
+        private readonly IUserAccesor _userAccesor;
         public FollowingResolve(IUserAccesor userAccesor, DataContext dataContext)
         {
             _userAccesor = userAccesor;

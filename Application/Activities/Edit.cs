@@ -3,12 +3,9 @@ using FluentValidation;
 using Infrastructure;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Application.Activities.Create;
 
 namespace Application.Activities
 {
@@ -40,11 +37,11 @@ namespace Application.Activities
 
         public class Handler : IRequestHandler<Command>
         {
-            private DataContext _dataContext;
+            private readonly DataContext _dataContext;
 
             public Handler(DataContext dataContext)
             {
-                this._dataContext = dataContext;
+                _dataContext = dataContext;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -60,8 +57,6 @@ namespace Application.Activities
                 activity.City = request.City ?? activity.City;
                 activity.Category = request.Category ?? activity.Category;
                 activity.Date = request.Date ?? activity.Date;
-
-                //_dataContext.Attach(previous); //no hace falta porque ya el Find lo atacho
 
                 if (await _dataContext.SaveChangesAsync() > 0)
                     return Unit.Value;

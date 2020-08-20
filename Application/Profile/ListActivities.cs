@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,20 +40,14 @@ namespace Application.Profile
                     .OrderBy(a => a.Activity.Date)
                     .AsQueryable();
 
-                switch (request.Predicate)
+                queryable = request.Predicate switch
                 {
-                    case "past":
-                        queryable = queryable.Where(a => a.Activity.Date <= DateTime.Now);
-                        break;
-                    case "hosting":
-                        queryable = queryable.Where(a => a.IsHost);
-                        break;
-                    default:
-                        queryable = queryable.Where(a => a.Activity.Date >= DateTime.Now);
-                        break;
-                }
+                    "past" => queryable.Where(a => a.Activity.Date <= DateTime.Now),
+                    "hosting" => queryable.Where(a => a.IsHost),
+                    _ => queryable.Where(a => a.Activity.Date >= DateTime.Now),
+                };
 
-                var activities = queryable.ToList();
+                var activities = await queryable.ToListAsync();
                 var activitiesToReturn = new List<UserActivityDTO>();
 
                 foreach (var activity in activities)

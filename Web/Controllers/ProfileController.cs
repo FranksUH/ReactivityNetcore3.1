@@ -1,10 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Profile;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
@@ -14,7 +11,7 @@ namespace Web.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<ProfileDTO>> GetProfile(string username)
         {
-            return await Mediator.Send(new Application.Profile.Details.Query(){ UserName = username });
+            return await Mediator.Send(new Details.Query(){ UserName = username });
         }
 
         [HttpGet("{username}/activities")]

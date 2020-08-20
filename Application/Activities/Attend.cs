@@ -1,13 +1,10 @@
-﻿using Application.DTOs;
-using Application.Errors;
+﻿using Application.Errors;
 using Application.Interfaces;
 using Domain;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,8 +19,8 @@ namespace Application.Activities
 
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private IUserAccesor _userAccesor;
-            private DataContext _dataContext;
+            private readonly IUserAccesor _userAccesor;
+            private readonly DataContext _dataContext;
             public Handler(IUserAccesor userAccesor, DataContext dataContext)
             {
                 _dataContext = dataContext;
@@ -53,7 +50,7 @@ namespace Application.Activities
                     DateJoined=DateTime.Now
                 });
 
-                if (_dataContext.SaveChanges() > 0)
+                if ((await _dataContext.SaveChangesAsync()) > 0)
                     return Unit.Value;
 
                 throw new Exception("Problem saving changes");

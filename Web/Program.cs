@@ -15,23 +15,21 @@ namespace Web
         public static void Main(string[] args)
         {
             var builder = CreateWebHostBuilder(args).Build();
-            
-            using(var scope = builder.Services.CreateScope())
+
+            using var scope = builder.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            try
+            {  
+                var context = services.GetRequiredService<DataContext>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                //var modelBuilder = services.GetRequiredService<ModelBuilder>();
+                context.Database.Migrate();
+                Seed.SeedData(context, userManager).Wait();
+            }
+            catch (Exception ex)
             {
-                var services = scope.ServiceProvider;
-                try
-                {   //Superrr bueno, se puede inicializar lo mismo con el context que con el modelBuilder
-                    var context = services.GetRequiredService<DataContext>();
-                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                    //var modelBuilder = services.GetRequiredService<ModelBuilder>();
-                    context.Database.Migrate();
-                    Seed.SeedData(context, userManager).Wait();
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occured during migration");
-                }
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occured during migration");
             }
             builder.Run();
         }

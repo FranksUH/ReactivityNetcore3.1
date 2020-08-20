@@ -1,15 +1,9 @@
 ﻿using Application.DTOs;
 using Application.Extensions;
 using Application.Interfaces;
-using AutoMapper;
-using Domain;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,13 +17,11 @@ namespace Application.Profile
         }
         public class Handler : IRequestHandler<Query, ProfileDTO>
         {
-            private DataContext _dataContext;
-            private IMapper _mapper;
-            private IUserAccesor _userAccesor;
-            public Handler(DataContext dataContext, IMapper mapper, IUserAccesor userAccesor)
+            private readonly DataContext _dataContext;
+            private readonly IUserAccesor _userAccesor;
+            public Handler(DataContext dataContext, IUserAccesor userAccesor)
             {
                 _dataContext = dataContext;
-                _mapper = mapper;
                 _userAccesor = userAccesor;
             }
             public async Task<ProfileDTO> Handle(Query request, CancellationToken cancellationToken)

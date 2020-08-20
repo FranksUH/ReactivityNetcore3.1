@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SecurityInfrastructure.Security
@@ -16,8 +13,8 @@ namespace SecurityInfrastructure.Security
 
     public class IsHostRequirementHandler : AuthorizationHandler<IsHostRequirement>
     {
-        private IHttpContextAccessor _contextAccessor;
-        private DataContext _dataContext;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly DataContext _dataContext;
         public IsHostRequirementHandler(IHttpContextAccessor contextAccessor, DataContext dataContext)
         {
             _dataContext = dataContext;

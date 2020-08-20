@@ -19,12 +19,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
-using Infrastructure.Photo;
-using Infrastructure.Interfaces;
 using Web.SignalR;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Newtonsoft.Json.Schema;
 using System.Threading.Tasks;
+using Common.Configurations;
+using Common.Service.Interfaces;
+using Common.Service.Implementation;
 
 namespace Web
 {
@@ -45,6 +44,7 @@ namespace Web
                 opt.UseLazyLoadingProxies();
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+
             services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", (policy) =>
@@ -55,7 +55,9 @@ namespace Web
 
             services.AddRouting();
             services.AddSignalR();
-            services.AddMvc(opt=> {
+
+            services.AddMvc(opt=> 
+            {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
@@ -70,6 +72,7 @@ namespace Web
             identityBuilder.AddSignInManager<SignInManager<AppUser>>();
 
             //Authentication
+            var appSettingsSection = Configuration.GetSection("AppSettings");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Supper S3cret K31"));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
@@ -117,10 +120,10 @@ namespace Web
 
             //Configuration
             services.Configure<PhotoSettings>(Configuration.GetSection("PhotoConf"));
+            services.Configure<AppSettings>(appSettingsSection);
 
             //Photo
-            services.AddScoped<IPhotoAccesor, PhotoAccesor>();
-            
+            services.AddScoped<IPhotoAccessor, PhotoAccesor>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -143,10 +146,12 @@ namespace Web
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
+
             app.UseSignalR(routes => 
             {
                 routes.MapHub<ChatHub>("/chat");
             });
+
             app.UseMvc();
             app.UseEndpoints(endpoints =>
             {

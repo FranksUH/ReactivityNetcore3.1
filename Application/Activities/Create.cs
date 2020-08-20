@@ -3,11 +3,8 @@ using Domain;
 using FluentValidation;
 using Infrastructure;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,8 +38,8 @@ namespace Application.Activities
 
         public class Handler : IRequestHandler<Command>
         {
-            private DataContext _dataContext;
-            private IUserAccesor _userAccesor;
+            private readonly DataContext _dataContext;
+            private readonly IUserAccesor _userAccesor;
             public Handler(DataContext dataContext, IUserAccesor userAccesor)
             {
                 _dataContext = dataContext;
@@ -64,7 +61,7 @@ namespace Application.Activities
 
                 _dataContext.Activities.Add(newAct);
 
-                var user = _dataContext.Users.SingleOrDefault(u => u.UserName == _userAccesor.GetUserName());
+                var user = await _dataContext.Users.SingleOrDefaultAsync(u => u.UserName == _userAccesor.GetUserName());
 
                 var attendee = new UserActivity
                 {

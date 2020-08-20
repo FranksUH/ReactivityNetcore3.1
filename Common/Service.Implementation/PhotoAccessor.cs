@@ -1,15 +1,14 @@
-﻿using Infrastructure.Interfaces;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Common.Configurations;
+using Common.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Photo
+namespace Common.Service.Implementation
 {
-    public class PhotoAccesor : IPhotoAccesor
+    public class PhotoAccesor : IPhotoAccessor
     {
         private string path;
         public PhotoAccesor(IOptions<PhotoSettings> options)
@@ -40,7 +39,7 @@ namespace Infrastructure.Photo
                     string id = Guid.NewGuid().ToString();
                     using (var stream = formFile.OpenReadStream())
                     {
-                        FileStream fs = new FileStream($"{path}/{id}.jpg" , FileMode.Create, FileAccess.ReadWrite);
+                        FileStream fs = new FileStream($"{path}/{id}.jpg", FileMode.Create, FileAccess.ReadWrite);
                         await formFile.CopyToAsync(fs);
                         fs.Close();
                     }
@@ -50,7 +49,7 @@ namespace Infrastructure.Photo
                 {
                     Console.WriteLine("Error uploading: " + error.Message);
                     return "Error";
-                }                
+                }
             }
             return "Empty";
         }

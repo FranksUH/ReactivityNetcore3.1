@@ -1,5 +1,4 @@
-﻿using Application.Activities;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Domain;
 using Microsoft.IdentityModel.Tokens;
 using System;

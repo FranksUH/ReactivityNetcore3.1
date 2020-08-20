@@ -1,12 +1,10 @@
 ﻿using Application.Interfaces;
+using Common.Service.Interfaces;
 using Infrastructure;
-using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,10 +18,10 @@ namespace Application.Photo
         }
         public class Handler : IRequestHandler<Command, Domain.Photo>
         {
-            private IPhotoAccesor _photoAccesor;
-            private IUserAccesor _userAccesor;
-            private DataContext _dataContext;
-            public Handler(IPhotoAccesor photoAccesor, IUserAccesor userAccesor, DataContext dataContext)
+            private readonly IPhotoAccessor _photoAccesor;
+            private readonly IUserAccesor _userAccesor;
+            private readonly DataContext _dataContext;
+            public Handler(IPhotoAccessor photoAccesor, IUserAccesor userAccesor, DataContext dataContext)
             {
                 _dataContext = dataContext;
                 _userAccesor = userAccesor;
@@ -35,17 +33,17 @@ namespace Application.Photo
                 if (photoId == "Empty" || photoId == "Error")
                     throw new Exception("Error submitting file");
 
-                var user = _dataContext.Users.FirstOrDefault(usr => usr.UserName == _userAccesor.GetUserName());
+                var user = await _dataContext.Users.FirstOrDefaultAsync(usr => usr.UserName == _userAccesor.GetUserName());
                 var photo = new Domain.Photo()
                 {
                     Id = photoId,
-                    IsMain = (user.Photos.Count > 0)?false:true,
+                    IsMain = (user.Photos.Count > 0) ? false : true,
                     AppUserId = user.Id
                 };
 
-                _dataContext.Photos.Add(photo);
+                await _dataContext.Photos.AddAsync(photo);
 
-                if (_dataContext.SaveChanges() > 0)
+                if (await _dataContext.SaveChangesAsync() > 0)
                     return photo;
                 throw new Exception("Error saving changes");
             }

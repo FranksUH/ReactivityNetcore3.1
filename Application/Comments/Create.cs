@@ -1,14 +1,11 @@
 ﻿using Application.DTOs;
 using Application.Errors;
-using Application.Interfaces;
 using AutoMapper;
 using Domain;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,8 +21,8 @@ namespace Application.Comments
         }
         public class Handler : IRequestHandler<Command, CommentDTO>
         {
-            private DataContext _dataContext;
-            private IMapper _mapper;
+            private readonly DataContext _dataContext;
+            private readonly IMapper _mapper;
             public Handler(DataContext dataContext, IMapper mapper)
             {
                 _dataContext = dataContext;

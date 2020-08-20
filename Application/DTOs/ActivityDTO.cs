@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Application.DTOs
 {
@@ -16,6 +14,5 @@ namespace Application.DTOs
         public string Venue { get; set; }
         public virtual ICollection<AttendeeDTO> Attendees { get; set; }  
         public virtual ICollection<CommentDTO> Comments { get; set; }
-
     }
 }
